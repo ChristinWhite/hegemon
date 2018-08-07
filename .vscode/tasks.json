@@ -1,0 +1,57 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks"  : [
+		{
+			"label"       : "Hegemon: Run",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -f /tmp/x",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Debug Output",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -f /tmp/x -d",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Help",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -hf /tmp/x",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: No Color",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -nf /tmp/x",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: No Arguments",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		}
+	]
+}
