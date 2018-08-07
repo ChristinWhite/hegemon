@@ -4,9 +4,9 @@
 	"version": "2.0.0",
 	"tasks"  : [
 		{
-			"label"       : "Hegemon: Run",
+			"label"       : "Hegemon: Run with Repo over SSH",
 			"type"        : "shell",
-			"command"     : "./hegemon.sh -f /tmp/x",
+			"command"     : "./hegemon.sh -r \"git@github.com:christopherdwhite/superlumic-config.git\"",
 			"presentation": {
 				"reveal": "always",
 				"panel" : "shared"
@@ -14,9 +14,59 @@
 			"problemMatcher": []
 		},
 		{
-			"label"       : "Hegemon: Debug Output",
+			"label"       : "Hegemon: Run with Repo over HTTPS",
 			"type"        : "shell",
-			"command"     : "./hegemon.sh -f /tmp/x -d",
+			"command"     : "./hegemon.sh -r \"git@github.com:christopherdwhite/superlumic-config.git\"",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Run with File",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -f /Users/cwhite/Source/csystems/superlumic-config/cwhite.yml",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Debug with Repo over SSH",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -dr \"git@github.com:christopherdwhite/superlumic-config.git\"",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Debug with Repo over HTTPS",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -dr \"git@github.com:christopherdwhite/superlumic-config.git\"",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Debug with File",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh -df \"/Users/cwhite/Source/csystems/superlumic-config/cwhite.yml\"",
+			"presentation": {
+				"reveal": "always",
+				"panel" : "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label"       : "Hegemon: Run with No Arguments",
+			"type"        : "shell",
+			"command"     : "./hegemon.sh",
 			"presentation": {
 				"reveal": "always",
 				"panel" : "shared"
@@ -26,27 +76,7 @@
 		{
 			"label"       : "Hegemon: Help",
 			"type"        : "shell",
-			"command"     : "./hegemon.sh -hf /tmp/x",
-			"presentation": {
-				"reveal": "always",
-				"panel" : "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label"       : "Hegemon: No Color",
-			"type"        : "shell",
-			"command"     : "./hegemon.sh -nf /tmp/x",
-			"presentation": {
-				"reveal": "always",
-				"panel" : "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label"       : "Hegemon: No Arguments",
-			"type"        : "shell",
-			"command"     : "./hegemon.sh",
+			"command"     : "./hegemon.sh -h",
 			"presentation": {
 				"reveal": "always",
 				"panel" : "shared"
