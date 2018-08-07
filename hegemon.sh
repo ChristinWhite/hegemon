@@ -99,13 +99,17 @@ NO_COLOR="${NO_COLOR:-}"    # true = disable color. otherwise autodetected
 
 # # Functions
 
-# ## __b3bp_log() BASH3 Boilerplate Log
+# TODO: Decide on exact docblock syntax and unify.
+
+# ## Printing & Logging
+
+# ### __b3bp_log() BASH3 Boilerplate Log
 #
 # Log and print different kinds of information from general info to critical errors.
 #
 # - `$1`:      string    required  The log-level for the string being logged and printed. Values can be `debug`, `info`, `notice`, `warning`, `error`, `critical`, `alert` or `emergency`.
 # - `$@`:      string    required  The full string to be logged and printed.
-# - `exit`:    implicit
+# - `exit`:    code 0    implicit  Always exits succesfully.
 #
 __b3bp_log () {
 	local log_level="${1}"
@@ -158,9 +162,9 @@ __b3bp_log () {
 #
 # Executes __b3bp_log to log and print information or problems of different types and severities depending on the specified `$LOG_LEVEL` defined at execution (or defaulting to 6).
 #
-# - `$1`:     string   required  String to to log and print
-# - `exit`:   code               For emergency(): `1`
-# - `exit`:   code               All others: `0`
+# - `$1`:    string  required  String to to log and print.
+# - `exit`:  code 1  explicit  emergency() always exits unsuccessfully.
+# - `true`:  code 0  explicit  All others exit successfully.
 #
 emergency () {                                  __b3bp_log emergency "${@}"; exit 1; }
 alert ()     { [[ "${LOG_LEVEL:-0}" -ge 1 ]] && __b3bp_log alert "${@}"; true; }
@@ -176,8 +180,8 @@ debug ()     { [[ "${LOG_LEVEL:-0}" -ge 7 ]] && __b3bp_log debug "${@}"; true; }
 #
 # Generates and echoes description and syntax information when script is run with `-h` or `--help` options.
 #
-# - `$1`:      string  Title text to print at top.
-# - `exit`:    code    `1`
+# - `$1`:    string            Title text to print at top.
+# - `exit`:  code 1  explicit  Always exits unsuccessfully.
 #
 help () {
 	echo "" 1>&2
@@ -197,6 +201,37 @@ help () {
 }
 
 
+
+# ## __validate_local ()
+#
+# Validates that the configuration file exists and is readable.
+#
+# - `exit`:  code `0`  implicit  Validation successful.
+# - `exit`:  code `1`  implicit  Validation unsuccessful.
+#
+__validate_local () {
+	if [[ "${__local:-}" ]] && info "Validating configuration file is accessible"; then
+		if ! test -r "${__local}"; then
+			[[ "${LOG_LEVEL:-}" ]] || emergency "Unable to read file from ${__local}"
+		fi
+	fi
+}
+
+
+# ## __validate_repo ()
+#
+# Validates that the repo URL can be cloned.
+#
+# - `exit`:  code `0`  implicit  Validation successful.
+# - `exit`:  code `1`  implicit  Validation unsuccessful.
+#
+__validate_repo () {
+	if [[ "${__repo:-}" ]] && info "Validating repository"; then
+		if ! git ls-remote --tags "${__repo}" refs/heads/master; then
+			[[ "${LOG_LEVEL:-}" ]] || emergency "Unable to read repository from ${__repo}"
+		fi
+	fi
+}
 
 
 
@@ -400,7 +435,7 @@ fi
 #
 # Print cleaning up info message.
 #
-# - `exit`:  implicit
+# - `exit`:  code 0  implicit  Always exits successfully
 #
 __b3bp_cleanup_before_exit () {
 	info "Cleaning up environment variables. Done"
@@ -412,9 +447,9 @@ trap __b3bp_cleanup_before_exit EXIT
 #
 # Print error code and exit.
 #
-# - `$1`:    string    Function name
-# - `$2`:    int       Line number
-# - `exit`:  explicit  Exits with error code from previous command.
+# - `$1`:    string   Function name for error.
+# - `$2`:    int      Line number for error.
+# - `exit`:  code !0  Always exits unsuccessfully with error code from previous command.
 #
 # requires `set -o errtrace`
 #
@@ -460,7 +495,7 @@ fi
 
 
 
-# ## Validation
+# ## Command Validation
 #
 # Error out if the things required for your script are not present
 #
@@ -473,18 +508,37 @@ fi
 
 
 
+# ## Set Variables from Arguments
+[[ "${arg_f:-}" ]] && __local=${arg_f}
+[[ "${arg_r:-}" ]] && __repo=${arg_r}
+
+
+
 # ## Runtime
 
 # ### Print General Information
 header
+
+[[ "${__repo:-}" ]] && info "Configuration from remote repository:" && info "${__repo}"
+[[ "${__local:-}" ]] && info "Configuration from local file:" && info "${__file}"
+
 debug "__i_am_main_script: ${__i_am_main_script}"
 debug "__file: ${__file}"
 debug "__dir: ${__dir}"
 debug "__base: ${__base}"
-info "OSTYPE: ${OSTYPE}"
+debug "OSTYPE: ${OSTYPE}"
 
-info "Argument --file:  ${arg_f}"
-info "Argument --repo:  ${arg_r}"
-info "Argument --debug: ${arg_d}"
-info "Argument --help:  ${arg_h}"
-info "Argument -v:      ${arg_v}"
+debug "Argument --file:  ${arg_f}"
+debug "Argument --repo:  ${arg_r}"
+debug "Argument --debug: ${arg_d}"
+debug "Argument --help:  ${arg_h}"
+debug "Argument -v:      ${arg_v}"
+
+
+# ### Validate configuration
+
+if [[ "${__repo:-}" ]]; then
+	__validate_repo
+elif [[ "${__local:-}" ]]; then
+	__validate_local
+fi
